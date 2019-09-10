@@ -1,7 +1,7 @@
 <template>
   <div class="article">
     <div v-if="cover" class="cover">
-      <img :src="'http://qiniu1.qihuanrobot.com/' + cover" />
+      <img :src="'http://qiniu.fancyrobot.com/' + cover" />
     </div>
     <div class="top">
       <el-input v-model="title" auto-complete="off" placeholder="请输入标题" />
@@ -54,7 +54,7 @@ export default {
     };
   },
   created() {
-    axios.get("https://api.qihuanrobot.com/file/getQNToken").then(res => {
+    axios.get("https://api.fancyrobot.com/file/getQNToken").then(res => {
       this.form = {
         token: res.data.data
       };
