@@ -46,10 +46,11 @@ export default {
           "ULwZ56pyKQdbcjlulk2z_LfFFKAmKcWxojDLc9f4:uqx1mTMqQn-C-yVYllN0ojFHA5Q=:eyJzY29wZSI6InRlc3N5c3RlbSIsImRlYWRsaW5lIjoxNTYzMzQ4NjA1fQ=="
       },
       options: [
-        { label: "Web开发", value: "web" },
-        { label: "NodeJs", value: "node" },
-        { label: "性能优化", value: "optimize" },
-        { label: "项目总结", value: "summary" }
+        { label: 'Web开发', value: 'web' },
+        { label: 'Javascript', value: 'js' },
+        { label: 'NodeJs', value: 'node' },
+        { label: '开发手册', value: 'dev' },
+        { label: '项目总结', value: 'summary' }
       ]
     };
   },
