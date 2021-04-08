@@ -1,7 +1,7 @@
 <template>
   <div class="article">
     <div v-if="cover" class="cover">
-      <img :src="'http://qiniu.fancyrobot.com/' + cover" />
+      <img :src="'https://qiniu.gosnails.pro/' + cover" />
     </div>
     <div class="top">
       <el-input v-model="title" auto-complete="off" placeholder="请输入标题" />
@@ -13,10 +13,17 @@
           :value="item.value"
         />
       </el-select>
-
+      <el-select v-model="classs" placeholder="请选择">
+        <el-option
+          v-for="item in options1"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
       <el-upload
         class="upload-box"
-        action="//up.qbox.me/"
+        action="//upload-z1.qiniup.com/"
         :data="form"
         :on-success="handleSuccess"
         :show-file-list="false"
@@ -38,6 +45,7 @@ export default {
     return {
       title: "",
       type: "",
+      classs: "",
       cover: "",
       editor: null,
       id: this.$route.params.id,
@@ -45,19 +53,27 @@ export default {
         token:
           "ULwZ56pyKQdbcjlulk2z_LfFFKAmKcWxojDLc9f4:uqx1mTMqQn-C-yVYllN0ojFHA5Q=:eyJzY29wZSI6InRlc3N5c3RlbSIsImRlYWRsaW5lIjoxNTYzMzQ4NjA1fQ=="
       },
+      options1: [
+         { label: '原创', value: 'original' },
+         { label: '读书', value: 'read' },
+         { label: '每日算法', value: 'algorithm' },
+      ],
       options: [
         { label: 'Web开发', value: 'web' },
         { label: 'Javascript', value: 'js' },
-        { label: 'NodeJs', value: 'node' },
         { label: '开发手册', value: 'dev' },
-        { label: '项目总结', value: 'summary' }
+        { label: '项目总结', value: 'summary' },
+        { label: '设计模式', value: 'pattern' },
+        { label: '简单', value: 'simple' },
+        { label: '中等', value: 'secondary' },
+        { label: '困难', value: 'difficulty' }
       ]
     };
   },
   created() {
-    axios.get("https://api.fancyrobot.com/file/getQNToken").then(res => {
+    axios.get("https://api.gosnails.pro/qiniu/token").then(res => {
       this.form = {
-        token: res.data.data
+        token: res.data.data.upload_token
       };
     });
   },
@@ -75,6 +91,7 @@ export default {
         updateArticle(this.id, {
           title: this.title,
           content: content,
+          class: this.classs,
           type: this.type,
           cover: this.cover
         }).then(res => {
@@ -90,6 +107,7 @@ export default {
       }
       addArticle({
         title: this.title,
+        class: this.classs,
         content: content,
         type: this.type,
         cover: this.cover
@@ -116,6 +134,7 @@ export default {
         this.title = res.title;
         this.cover = res.cover;
         this.type = res.type;
+        this.classs = res.class;
         this.editor.setValue(res.content);
       });
     }

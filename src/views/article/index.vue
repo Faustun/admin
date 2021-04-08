@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     _getArticleList() {
-      getArticleList().then(res => {
+      getArticleList({per_page: 50}).then(res => {
         this.tableData = res.data;
         for (let i = 0; i < this.tableData.length; i++) {
           this.tableData[i].createdAt = formatTime(
