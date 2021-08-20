@@ -8,22 +8,14 @@
       <el-select v-model="type" placeholder="请选择">
         <el-option
           v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <el-select v-model="classs" placeholder="请选择">
-        <el-option
-          v-for="item in options1"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          :key="item._id"
+          :label="item.name"
+          :value="item._id"
         />
       </el-select>
       <el-upload
         class="upload-box"
-        action="//upload-z1.qiniup.com/"
+        action="//up-z1.qiniup.com"
         :data="form"
         :on-success="handleSuccess"
         :show-file-list="false"
@@ -39,38 +31,27 @@
 <script>
 import * as monaco from "monaco-editor/esm/vs/editor/editor.main.js";
 import { addArticle, updateArticle, getArticleDetail } from "@/api/article";
+import { getClassifyList } from "@/api/classify";
 import axios from "axios";
 export default {
   data() {
     return {
       title: "",
       type: "",
-      classs: "",
       cover: "",
       editor: null,
       id: this.$route.params.id,
       form: {
         token:
-          "ULwZ56pyKQdbcjlulk2z_LfFFKAmKcWxojDLc9f4:uqx1mTMqQn-C-yVYllN0ojFHA5Q=:eyJzY29wZSI6InRlc3N5c3RlbSIsImRlYWRsaW5lIjoxNTYzMzQ4NjA1fQ=="
+          "ULwZ56pyKQdbcjlulk2z_LfFFKAmKcWxojDLc9f4:UIOe6adXOP2w9Az8qP8QOwyi1TU=:eyJzY29wZSI6InRlc3N5c3RlbSIsImRlYWRsaW5lIjoxNjI5NDQxMjY3fQ=="
       },
-      options1: [
-         { label: '原创', value: 'original' },
-         { label: '读书', value: 'read' },
-         { label: '每日算法', value: 'algorithm' },
-      ],
-      options: [
-        { label: 'Web开发', value: 'web' },
-        { label: 'Javascript', value: 'js' },
-        { label: '开发手册', value: 'dev' },
-        { label: '项目总结', value: 'summary' },
-        { label: '设计模式', value: 'pattern' },
-        { label: '简单', value: 'simple' },
-        { label: '中等', value: 'secondary' },
-        { label: '困难', value: 'difficulty' }
-      ]
+      options: []
     };
   },
   created() {
+    getClassifyList().then(res => {
+      this.options = res.data;
+    })
     axios.get("https://api.gosnails.pro/qiniu/token").then(res => {
       this.form = {
         token: res.data.data.upload_token
@@ -91,7 +72,6 @@ export default {
         updateArticle(this.id, {
           title: this.title,
           content: content,
-          class: this.classs,
           type: this.type,
           cover: this.cover
         }).then(res => {
@@ -107,7 +87,6 @@ export default {
       }
       addArticle({
         title: this.title,
-        class: this.classs,
         content: content,
         type: this.type,
         cover: this.cover
@@ -134,7 +113,6 @@ export default {
         this.title = res.title;
         this.cover = res.cover;
         this.type = res.type;
-        this.classs = res.class;
         this.editor.setValue(res.content);
       });
     }

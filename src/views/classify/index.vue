@@ -1,26 +1,34 @@
 <template>
   <div class="article">
     <el-top :keywords="keywords" @onSearch="handleSearch">
-      <el-button @click="handleAddArticle">添加文章</el-button>
+      <el-button @click="handleAddClassify">添加标签</el-button>
     </el-top>
     <el-table v-loading="loading" :data="tableData" border style="width: 100%">
-      <el-table-column prop="title" label="标题" />
-      <el-table-column prop="type" label="类型" />
+      <el-table-column prop="name" label="标题" />
       <el-table-column prop="createdAt" label="时间" />
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="标签" :visible.sync="dialogFormVisible">
+      <el-form>
+        <el-form-item label="名字">
+          <el-input v-model="name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleOk">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import ElTop from "@/components/Top";
 import { formatTime } from "@/utils";
-import { getClassifyList } from "@/api/classify";
-import { getArticleList, deleteById } from "@/api/article";
+import { getClassifyList, addClassify, deleteById } from "@/api/classify";
 
 export default {
   components: { ElTop },
@@ -28,23 +36,19 @@ export default {
     return {
       keywords: "",
       tableData: [],
-      classifyData: [],
-      loading: false
+      loading: false,
+      name: "",
+      dialogFormVisible: false
     };
   },
   created() {
-    getClassifyList().then(res => {
-      this.classifyData = res.data;
-      this._getArticleList();
-    })
+    this._getArticleList();
   },
   methods: {
     _getArticleList() {
-      getArticleList({per_page: 50}).then(res => {
+      getClassifyList().then(res => {
         this.tableData = res.data;
         for (let i = 0; i < this.tableData.length; i++) {
-          const filterData = this.classifyData.filter(item => item._id === this.tableData[i].type)[0]
-          this.tableData[i].type = filterData ? filterData.name : '';
           this.tableData[i].createdAt = formatTime(
             new Date(this.tableData[i].createdAt).getTime(),
             "{y}-{m}-{d} {h}:{i}:{s}"
@@ -53,18 +57,28 @@ export default {
       });
     },
     handleSearch() {},
-    handleAddArticle() {
-      this.$router.push({
-        path: `/article/add`
-      });
+    handleAddClassify() {
+      this.dialogFormVisible = true;
     },
-    handleEdit(index, item) {
-      this.$router.push({
-        path: `/article/edit/${item._id}`
-      });
+    handleOk() {
+      if (!this.name) {
+         this.$message({
+          type: "warning",
+          message: "添加成功!"
+        });
+        return
+      };
+      addClassify({ name: this.name, type: 1 }).then(res => {
+        this.$message({
+          type: "success",
+          message: "添加成功!"
+        });
+        this._getArticleList();
+        this.dialogFormVisible = false;
+      })
     },
     handleDelete(index, item) {
-      this.$confirm("此操作将永久删除该文章, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该标签, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

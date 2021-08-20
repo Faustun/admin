@@ -77,6 +77,17 @@ export const constantRoutes = [
       hidden: true
     }]
   },
+  {
+    path: '/classify',
+    component: Layout,
+    redirect: '/classify',
+    children: [{
+      path: 'list',
+      name: 'ClassifyList',
+      component: () => import('@/views/classify/index'),
+      meta: { title: '标签', icon: 'dashboard' }
+    }]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
